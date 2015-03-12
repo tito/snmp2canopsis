@@ -1,0 +1,11 @@
+[snmp]
+ip = 127.0.0.1
+port = 162
+
+[amqp]
+host = localhost
+port = 5672
+user = guest
+password = guest
+vhost = amqp
+exchange = amqp.events
