@@ -40,11 +40,39 @@ Then you can start with a predefined configuration:
 
     $ sudo snmp2cano -c snmp2cano.conf
 
+Otherwise, you can go manually:
+
+    $ snmp2cano --help
+    usage: snmp2cano [-h] [-p [PORT]] [-l [IP]] [-H [AMQP_HOST]] [-P [AMQP_PORT]]
+                     [-U [AMQP_USER]] [-W [AMQP_PASSWORD]] [-V [AMQP_VHOST]]
+                     [-E [AMQP_EXCHANGE]] [-c [CONFIG]]
+
+    Send SNMP trap to amqp
+
+    optional arguments:
+      -h, --help            show this help message and exit
+      -p [PORT], --port [PORT]
+                            SNMP port to listen
+      -l [IP], --ip [IP]    SNMP ip to listen (0.0.0.0 for all)
+      -H [AMQP_HOST], --amqp-host [AMQP_HOST]
+                            AMQP hostname
+      -P [AMQP_PORT], --amqp-port [AMQP_PORT]
+                            AMQP port
+      -U [AMQP_USER], --amqp-user [AMQP_USER]
+                            AMQP user
+      -W [AMQP_PASSWORD], --amqp-password [AMQP_PASSWORD]
+                            AMQP password
+      -V [AMQP_VHOST], --amqp-vhost [AMQP_VHOST]
+                            AMQP vhost
+      -E [AMQP_EXCHANGE], --amqp-exchange [AMQP_EXCHANGE]
+                            AMQP exchange
+      -c [CONFIG], --config [CONFIG]
+                            Configuration file
 
 ## Test trap (incomplete)
 
-$ snmptrap -v 1 -c public localhost IF-MIB:linkDown localhost 2 0 '' \
-  ifIndex i 1 ifAdminStatus i 2 ifOperStatus i 2
+    $ snmptrap -v 1 -c public localhost IF-MIB:linkDown localhost 2 0 '' \
+      ifIndex i 1 ifAdminStatus i 2 ifOperStatus i 2
 
-$ snmptrap -v 2c -c public localhost '' IF-MIB:linkDown \
-  ifIndex i 1 ifAdminStatus i 2 ifOperStatus i 2
+    $ snmptrap -v 2c -c public localhost '' IF-MIB:linkDown \
+      ifIndex i 1 ifAdminStatus i 2 ifOperStatus i 2
