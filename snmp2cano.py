@@ -72,7 +72,7 @@ def thread_producer():
         "hostname": config.get("amqp", "host"),
         "userid": config.get("amqp", "user"),
         "port": config.getint("amqp", "port"),
-        "virtual_host": config.get("amqp", "host"),
+        "virtual_host": config.get("amqp", "vhost"),
         "password": config.get("amqp", "password")}
 
     while True:
