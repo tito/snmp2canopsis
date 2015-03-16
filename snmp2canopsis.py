@@ -113,7 +113,7 @@ def snmp_callback(dispatcher, domain, address, msg):
         if reqpdu.isSameTypeWith(mod.TrapPDU()):
             event = {
                 "connector": "snmp",
-                "connector_name": "snmp2cano",
+                "connector_name": "snmp2canopsis,
                 "event_type": "trap",
                 "source_type": "component",
                 "state": 3,

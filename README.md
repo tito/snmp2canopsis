@@ -1,6 +1,6 @@
 # SNMP trap daemon for Canopsis / AMQP
 
-`snmp2cano` is a daemon that listen to SNMP trap and send them into
+`snmp2canopsis` is a daemon that listen to SNMP trap and send them into
 the Canopsis/AMQP.
 
 
@@ -8,11 +8,11 @@ the Canopsis/AMQP.
 
 Stable version:
 
-    pip install snmp2cano
+    pip install snmp2canopsis
 
 Development version:
 
-    pip install https://github.com/tito/snmp2cano
+    pip install https://github.com/tito/snmp2canopsis
 
 
 ## Usage
@@ -20,9 +20,9 @@ Development version:
 Since the tool need to listen the SNMP trap port, you'll need to execute it
 with root permission:
 
-    $ sudo snmp2cano
+    $ sudo snmp2canopsis
 
-Create a configuration file named "snmp2cano.conf":
+Create a configuration file named "snmp2canopsis.conf":
 
     [snmp]
     ip = 127.0.0.1
@@ -38,12 +38,12 @@ Create a configuration file named "snmp2cano.conf":
 
 Then you can start with a predefined configuration:
 
-    $ sudo snmp2cano -c snmp2cano.conf
+    $ sudo snmp2canopsis -c snmp2canopsis.conf
 
 Otherwise, you can go manually:
 
-    $ snmp2cano --help
-    usage: snmp2cano [-h] [-p [PORT]] [-l [IP]] [-H [AMQP_HOST]] [-P [AMQP_PORT]]
+    $ snmp2canopsis --help
+    usage: snmp2canopsis [-h] [-p [PORT]] [-l [IP]] [-H [AMQP_HOST]] [-P [AMQP_PORT]]
                      [-U [AMQP_USER]] [-W [AMQP_PASSWORD]] [-V [AMQP_VHOST]]
                      [-E [AMQP_EXCHANGE]] [-c [CONFIG]]
 

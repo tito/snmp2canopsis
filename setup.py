@@ -9,7 +9,7 @@ with open(path.join(here, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
 
 setup(
-    name='snmp2cano',
+    name='snmp2canopsis,
     version='0.1',
     description='Send SNMP trap to Canopsis/AMQP',
     long_description=long_description,
@@ -25,10 +25,10 @@ setup(
         'Programming Language :: Python :: 2.7',
     ],
     install_requires=["kombu", "pysnmp", "Logbook"],
-    py_modules=["snmp2cano"],
+    py_modules=["snmp2canopsis],
     entry_points={
         'console_scripts': [
-            'snmp2cano=snmp2cano:main',
+            'snmp2canopsissnmp2canopsismain',
         ],
     },
 )
