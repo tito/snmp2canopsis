@@ -96,8 +96,16 @@ def thread_producer():
 
 
 def val_to_json(val):
-    val = val.getComponent().getComponent()
-    return val.prettyPrint()
+    try:
+        val_r = val
+        while hasattr(val_r, "getComponent"):
+            val_r = val_r.getComponent()
+        val_r = val_r.prettyPrint()
+        return val_r
+    except:
+        logsnmp.exception("Unable to convert val to json: {!r}".format(
+            val.prettyPrint()
+        ))
 
 
 def snmp_callback(dispatcher, domain, address, msg):
