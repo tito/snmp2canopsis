@@ -9,6 +9,7 @@ SNMP Connector for Canopsis
 __version__ = "0.1"
 
 
+import os
 import time
 import json
 import logbook
@@ -24,12 +25,13 @@ from pyasn1.codec.ber import decoder
 from pysnmp.proto import api
 from kombu import Connection
 from kombu.pools import producers
+from pprint import pprint
 
 
 # Logging
 logsnmp = logbook.Logger("snmp")
 logamqp = logbook.Logger("amqp")
-
+snmp_debug = os.environ.get("SNMP_DEBUG") == "1"
 
 # Configuration
 config = ConfigParser()
@@ -157,6 +159,8 @@ def snmp_callback(dispatcher, domain, address, msg):
                 message["trap_oid"] = message["vars"].get(SNMP_TRAP_OID)
 
             event["output"] = json.dumps(message)
+            if snmp_debug:
+                pprint(event)
             q.append(event)
             sem.release()
 
