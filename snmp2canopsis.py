@@ -39,6 +39,9 @@ config = ConfigParser()
 q = deque()
 sem = Semaphore(0)
 
+# version 2c
+SNMP_TRAP_OID = "1.3.6.1.6.3.1.1.4.1.0"
+
 
 def read_snmp_queue(producer):
     # consume the snmp event in the queue.
@@ -118,7 +121,9 @@ def snmp_callback(dispatcher, domain, address, msg):
             return
         reqmsg, msg = decoder.decode(msg, asn1Spec=mod.Message())
         reqpdu = mod.apiMessage.getPDU(reqmsg)
+        host, port = address
         if reqpdu.isSameTypeWith(mod.TrapPDU()):
+            atp = mod.apiTrapPDU
             event = {
                 "connector": "snmp",
                 "connector_name": "snmp2canopsis",
@@ -126,19 +131,30 @@ def snmp_callback(dispatcher, domain, address, msg):
                 "source_type": "component",
                 "state": 3,
                 "state_type": 1,
+                "component": host,
                 "timestamp": time.time()}
             message = {}
+
+            # extract vars
+            var_binds = atp.getVarBindList(reqpdu)
+            message["vars"] = {}
+            for oid, val in var_binds:
+                val = val_to_json(val)
+                if val is None:
+                    continue
+                message["vars"][oid.prettyPrint()] = val
+
             if msg_version == api.protoVersion1:
-                atp = mod.apiTrapPDU
-                event["component"] = atp.getAgentAddr(reqpdu).prettyPrint()
-                message["enterprise"] = atp.getEnterprise(reqpdu).prettyPrint()
+                event["snmp_version"] = "1"
+                enterprise = atp.getEnterprise(reqpdu).prettyPrint()
+                specific_trap = atp.getSpecificTrap(reqpdu).prettyPrint()
+                trap_oid = "{}.0.{}".format(enterprise, specific_trap)
+                #event["trap_component"] = atp.getAgentAddr(reqpdu).prettyPrint()
+                message["trap_oid"] = trap_oid
                 message["timeticks"] = atp.getTimeStamp(reqpdu).prettyPrint()
-                var_binds = atp.getVarBindList(reqpdu)
-                message["vars"] = {}
-                for oid, val in var_binds:
-                    message["vars"][oid.prettyPrint()] = val_to_json(val)
             else:
-                raise NotImplementedError()
+                event["snmp_version"] = "2c"
+                message["trap_oid"] = message["vars"].get(SNMP_TRAP_OID)
 
             event["output"] = json.dumps(message)
             q.append(event)
