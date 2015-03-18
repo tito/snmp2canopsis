@@ -148,9 +148,10 @@ def snmp_callback(dispatcher, domain, address, msg):
 
             if msg_version == api.protoVersion1:
                 event["snmp_version"] = "1"
-                enterprise = atp.getEnterprise(reqpdu).prettyPrint()
-                specific_trap = atp.getSpecificTrap(reqpdu).prettyPrint()
-                trap_oid = "{}.0.{}".format(enterprise, specific_trap)
+                #enterprise = atp.getEnterprise(reqpdu).prettyPrint()
+                #specific_trap = atp.getSpecificTrap(reqpdu).prettyPrint()
+                #trap_oid = "{}.0.{}".format(enterprise, specific_trap)
+                trap_oid = atp.getEnterprise(reqpdu).prettyPrint()
                 #event["trap_component"] = atp.getAgentAddr(reqpdu).prettyPrint()
                 message["trap_oid"] = trap_oid
                 message["timeticks"] = atp.getTimeStamp(reqpdu).prettyPrint()
