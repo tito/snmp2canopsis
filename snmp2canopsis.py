@@ -128,6 +128,16 @@ def val_to_json(val):
         ))
 
 
+def snmp_callback_exc(dispatcher, domain, address, msg):
+    # don't fail if a snmp callback fail.
+    try:
+        return snmp_callback(dispatcher, domain, address, msg)
+    except:
+        logsnmp.exception("Error in the SNMP callback")
+        logsnmp.error("Invalid trap from {}:{}, domain {}: {!r}".format(
+            address[0], address[1], ".".join(map(str, domain)), msg))
+
+
 def snmp_callback(dispatcher, domain, address, msg):
     if snmp_dump:
         global uid
@@ -204,7 +214,7 @@ def run():
 
     # start the snmp daemon
     dispatcher = AsynsockDispatcher()
-    dispatcher.registerRecvCbFun(snmp_callback)
+    dispatcher.registerRecvCbFun(snmp_callback_exc)
     snmp_ip = config.get("snmp", "ip")
     snmp_port = config.getint("snmp", "port")
     dispatcher.registerTransport(
