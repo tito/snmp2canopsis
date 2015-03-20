@@ -32,9 +32,11 @@ from pprint import pprint
 logsnmp = logbook.Logger("snmp")
 logamqp = logbook.Logger("amqp")
 snmp_debug = os.environ.get("SNMP_DEBUG") == "1"
+snmp_dump = os.environ.get("SNMP_DUMP")
 
 # Configuration
 config = ConfigParser()
+uid = 0
 
 
 # Queue management
@@ -127,6 +129,15 @@ def val_to_json(val):
 
 
 def snmp_callback(dispatcher, domain, address, msg):
+    if snmp_dump:
+        global uid
+        uid += 1
+        fn = os.path.join(snmp_dump, "{}_{}_{}.bintrap".format(
+            time.time(), address[0], uid))
+        with open(fn, "wb") as fd:
+            fd.write(msg)
+        logsnmp.debug("Trap dump to {}".format(fn))
+
     while msg:
         msg_version = int(api.decodeMessageVersion(msg))
         if msg_version in api.protoModules:
@@ -182,6 +193,10 @@ def snmp_callback(dispatcher, domain, address, msg):
 
 
 def run():
+    if snmp_debug:
+        logsnmp.info("Trap debug enabled")
+    if snmp_dump:
+        logsnmp.info("Trap dump enabled to {}".format(snmp_dump))
     # start the thread to amqp
     amqp_thread = Thread(target=thread_producer)
     amqp_thread.daemon = True
