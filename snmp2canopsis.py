@@ -29,6 +29,7 @@ from pprint import pprint
 
 
 # Logging
+logapp = logbook.Logger("snmp2canopsis")
 logsnmp = logbook.Logger("snmp")
 logamqp = logbook.Logger("amqp")
 snmp_debug = os.environ.get("SNMP_DEBUG") == "1"
@@ -36,8 +37,8 @@ snmp_dump = os.environ.get("SNMP_DUMP")
 
 # Configuration
 config = ConfigParser()
+system_conf = "/etc/snmp2canopsis.conf"
 uid = 0
-
 
 # Queue management
 q = deque()
@@ -115,6 +116,8 @@ def thread_producer():
 
 
 def val_to_json(val):
+    # try to be smart, and recurse until we get a value
+    # and return the prettyPrint of the value.
     try:
         val_r = val
         while hasattr(val_r, "getComponent"):
@@ -273,7 +276,15 @@ def main():
     args = parser.parse_args()
 
     if args.config:
+        logapp.info("Read configuration from {}".format(args.config))
         config.read(args.config)
+    else:
+        # try /etc/snmp2canopsis.conf
+        logapp.info("Read configuration from {}".format(system_conf))
+        if not os.path.exists(system_conf):
+            logapp.warning("No system configuration found !")
+        else:
+            config.read(system_conf)
 
     if not config.has_section("snmp"):
         config.add_section("snmp")
