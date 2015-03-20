@@ -47,16 +47,15 @@ sem = Semaphore(0)
 SNMP_TRAP_OID = "1.3.6.1.6.3.1.1.4.1.0"
 
 # Monkey patch pysnmp for COUNTER bug
+# Read at http://pysnmp.sourceforge.net/faq.html#1
 from pysnmp.proto import rfc1155, rfc1902, api
-from pyasn1.codec.ber import encoder, decoder
-
 def counterCloneHack(self, *args):
     if args and args[0] < 0:
         args = (0xffffffff+args[0]-1,) + args[1:]
 
     return self.__class__(*args)
-
 rfc1155.Counter.clone = counterCloneHack
+rfc1155.TimeTicks.clone = counterCloneHack
 rfc1902.Counter32.clone = counterCloneHack
 
 
