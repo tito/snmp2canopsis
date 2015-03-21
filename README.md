@@ -88,12 +88,12 @@ A daemon management is also included, you can start it with:
 ## Process management (ala nagios)
 
 A script is included to allow to start/stop the process, and manage
-configuration (start, stop, status, getConf, setConf).
+configuration (start, stop, getState, getConf, setConf).
 
     # cat-snmp2canopsis status
     {"connector": "0"}
     # cat-snmp2canopsis start
-    # cat-snmp2canopsis status
+    # cat-snmp2canopsis getState
     {"connector": "1"}
     # cat-snmp2canopsis getConf
     {"host": "localhost", "version": "0.2", "virtual_host": "canopsis",

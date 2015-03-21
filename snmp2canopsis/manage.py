@@ -26,8 +26,9 @@ def cmd_restart():
     return cmd_start()
 
 
-def cmd_status():
-    p = subprocess.Popen(["snmp2canopsis", "--status"])
+def cmd_get_state():
+    p = subprocess.Popen(["snmp2canopsis", "--status"],
+                         stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     p.communicate()
     status = 1 if p.returncode == 0 else 0
     ret = {"connector": status}
@@ -88,7 +89,7 @@ def cmd_set_conf():
 
 
 def main():
-    commands = ("start", "stop", "restart", "getStatus", "getConf", "setConf")
+    commands = ("start", "stop", "restart", "getState", "getConf", "setConf")
     if len(sys.argv) < 2:
         print("Error: missing command")
         sys.exit(1)
@@ -98,8 +99,8 @@ def main():
         print("Error: invalid command '{}'".format(command))
         sys.exit(1)
 
-    if command == "getStatus":
-        ret = cmd_get_status()
+    if command == "getState":
+        ret = cmd_get_state()
     elif command == "getConf":
         ret = cmd_get_conf()
     elif command == "setConf":
