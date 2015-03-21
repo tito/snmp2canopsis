@@ -6,10 +6,11 @@ SNMP Connector for Canopsis
 .. author:: Mathieu Virbel <mat@meltingrocks.com>
 """
 
-__version__ = "0.1"
+__version__ = "0.2"
 
 
 import os
+import sys
 import time
 import json
 import logbook
@@ -246,6 +247,8 @@ def main():
     import argparse
 
     parser = argparse.ArgumentParser(description="Send SNMP trap to amqp")
+    parser.add_argument("--version", action="store_const", const=1,
+                        help="Show version")
     parser.add_argument("-p", "--port", type=int, nargs="?",
                         default=162,
                         help="SNMP port to listen")
@@ -274,6 +277,10 @@ def main():
                         help="Configuration file")
 
     args = parser.parse_args()
+
+    if args.version:
+        print(__version__)
+        sys.exit(0)
 
     if args.config:
         logapp.info("Read configuration from {}".format(args.config))
