@@ -10,13 +10,15 @@ LOGFILE_FN = "/var/log/snmp2canopsis.log"
 
 
 def cmd_start():
-    p = subprocess.Popen(["snmp2canopsis", "--daemon", "--logfile", LOGFILE_FN])
+    p = subprocess.Popen(["snmp2canopsis", "--daemon", "--logfile", LOGFILE_FN],
+                         stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     p.communicate()
     return p.returncode
 
 
 def cmd_stop():
-    p = subprocess.Popen(["snmp2canopsis", "--kill"])
+    p = subprocess.Popen(["snmp2canopsis", "--kill"],
+                         stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     p.communicate()
     return p.returncode
 
@@ -106,9 +108,11 @@ def main():
     elif command == "setConf":
         ret = cmd_set_conf()
     elif command == "start":
-        ret = cmd_start()
+        cmd_start()
+        ret = cmd_get_state()
     elif command == "stop":
-        ret = cmd_stop()
+        cmd_stop()
+        ret = cmd_get_state()
     elif command == "restart":
         ret = cmd_restart()
     sys.exit(ret)

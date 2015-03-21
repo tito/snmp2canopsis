@@ -93,6 +93,7 @@ configuration (start, stop, getState, getConf, setConf).
     # cat-snmp2canopsis status
     {"connector": "0"}
     # cat-snmp2canopsis start
+    {"connector": "1"}
     # cat-snmp2canopsis getState
     {"connector": "1"}
     # cat-snmp2canopsis getConf
@@ -101,6 +102,7 @@ configuration (start, stop, getState, getConf, setConf).
      "exchange_name": "canopsis.snmp", "password": "guest",
      "userid": "guest", "port": "5672"}
     # cat-snmp2canopsis stop
+    {"connector": "0"}
 
 
 ## Test trap (incomplete)
