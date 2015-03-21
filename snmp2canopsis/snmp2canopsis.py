@@ -6,7 +6,7 @@ SNMP Connector for Canopsis
 .. author:: Mathieu Virbel <mat@meltingrocks.com>
 """
 
-__version__ = "0.2"
+__version__ = "0.3"
 
 
 import os
@@ -205,7 +205,7 @@ def snmp_callback(dispatcher, domain, address, msg):
     return msg
 
 
-def run():
+def run_main():
     if snmp_debug:
         logsnmp.info("Trap debug enabled")
     if snmp_dump:
@@ -242,6 +242,14 @@ def run():
             logsnmp.warning("{} messages lost".format(len(q)))
 
 
+def get_daemon(pid):
+    from daemon import Daemon
+    class Snmp2CanopsisDaemon(Daemon):
+        def run(self):
+            run_main()
+    return Snmp2CanopsisDaemon(pid)
+
+
 def main():
     # entry point
     import argparse
@@ -249,6 +257,17 @@ def main():
     parser = argparse.ArgumentParser(description="Send SNMP trap to amqp")
     parser.add_argument("--version", action="store_const", const=1,
                         help="Show version")
+    parser.add_argument("--daemon", action="store_const", const=1,
+                        help="Start as daemon")
+    parser.add_argument("--kill", action="store_const", const=1,
+                        help="Kill the daemon")
+    parser.add_argument("--status", action="store_const", const=1,
+                        help="Check if the daemon is running")
+    parser.add_argument("--pid", default="/var/run/snmp2canopsis.pid",
+                        help="Path to the PID file, defaults to "
+                             "/var/run/snmp2canopsis.pid")
+    parser.add_argument("--logfile", default=None,
+                        help="Redirect logs to logfile")
     parser.add_argument("-p", "--port", type=int, nargs="?",
                         default=162,
                         help="SNMP port to listen")
@@ -282,6 +301,11 @@ def main():
         print(__version__)
         sys.exit(0)
 
+    if args.logfile:
+        from logbook import FileHandler
+        log_handler = FileHandler(args.logfile)
+        log_handler.push_application()
+
     if args.config:
         logapp.info("Read configuration from {}".format(args.config))
         config.read(args.config)
@@ -314,7 +338,18 @@ def main():
     if not config.has_option("amqp", "exchange"):
         config.set("amqp", "exchange", args.amqp_exchange)
 
-    run()
+    if args.daemon:
+        d = get_daemon(args.pid)
+        d.start()
+    elif args.kill:
+        d = get_daemon(args.pid)
+        d.stop()
+    elif args.status:
+        d = get_daemon(args.pid)
+        sys.exit(0 if d.is_running() else 1)
+    else:
+        run_main()
+
 
 if __name__ == "__main__":
     main()

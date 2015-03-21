@@ -25,10 +25,11 @@ setup(
         'Programming Language :: Python :: 2.7',
     ],
     install_requires=["kombu", "pysnmp", "Logbook"],
-    py_modules=["snmp2canopsis"],
+    packages=["snmp2canopsis"],
     entry_points={
         'console_scripts': [
-            'snmp2canopsis=snmp2canopsis:main',
+            'snmp2canopsis=snmp2canopsis.snmp2canopsis:main',
+            'cat-snmp2canopsis=snmp2canopsis.manage:main'
         ],
     },
 )

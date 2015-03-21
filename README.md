@@ -6,7 +6,7 @@ the Canopsis/AMQP.
 
 ## Installation
 
-Stable version:
+Stable version (not published yet):
 
     pip install snmp2canopsis
 
@@ -22,7 +22,7 @@ with root permission:
 
     $ sudo snmp2canopsis
 
-Create a configuration file named "snmp2canopsis.conf":
+Create a configuration file named "/etc/snmp2canopsis.conf":
 
     [snmp]
     ip = 127.0.0.1
@@ -68,6 +68,40 @@ Otherwise, you can go manually:
                             AMQP exchange
       -c [CONFIG], --config [CONFIG]
                             Configuration file
+
+A daemon management is also included, you can start it with:
+
+    $ snmp2canopsis --daemon
+    [2015-03-21 10:01:30.654804] INFO: snmp2canopsis: Read configuration from /etc/snmp2canopsis.conf
+    Starting...
+
+    $ snmp2canopsis --status
+    [2015-03-21 10:01:57.394623] INFO: snmp2canopsis: Read configuration from /etc/snmp2canopsis.conf
+    Process (pid 22688) is running...
+
+    $ snmp2canopsis --kill
+    [2015-03-21 10:02:00.773632] INFO: snmp2canopsis: Read configuration from /etc/snmp2canopsis.conf
+    Stopping...
+    Stopped
+
+
+## Process management (ala nagios)
+
+A script is included to allow to start/stop the process, and manage
+configuration (start, stop, status, getConf, setConf).
+
+    # cat-snmp2canopsis status
+    {"connector": "0"}
+    # cat-snmp2canopsis start
+    # cat-snmp2canopsis status
+    {"connector": "1"}
+    # cat-snmp2canopsis getConf
+    {"host": "localhost", "version": "0.2", "virtual_host": "canopsis",
+     "snmp_port": "162", "snmp_ip": "0.0.0.0",
+     "exchange_name": "canopsis.snmp", "password": "guest",
+     "userid": "guest", "port": "5672"}
+    # cat-snmp2canopsis stop
+
 
 ## Test trap (incomplete)
 
