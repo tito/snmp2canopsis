@@ -6,7 +6,7 @@ SNMP Connector for Canopsis
 .. author:: Mathieu Virbel <mat@meltingrocks.com>
 """
 
-__version__ = "0.3"
+__version__ = "0.4"
 
 
 import os
@@ -172,16 +172,15 @@ def snmp_callback(dispatcher, domain, address, msg):
                 "state_type": 1,
                 "component": host,
                 "timestamp": time.time()}
-            message = {}
 
             # extract vars
             var_binds = atp.getVarBindList(reqpdu)
-            message["vars"] = {}
+            event["snmp_vars"] = {}
             for oid, val in var_binds:
                 val = val_to_json(val)
                 if val is None:
                     continue
-                message["vars"][oid.prettyPrint()] = val
+                event["snmp_vars"][oid.prettyPrint()] = val
 
             if msg_version == api.protoVersion1:
                 event["snmp_version"] = "1"
@@ -190,13 +189,12 @@ def snmp_callback(dispatcher, domain, address, msg):
                 #trap_oid = "{}.0.{}".format(enterprise, specific_trap)
                 trap_oid = atp.getEnterprise(reqpdu).prettyPrint()
                 #event["trap_component"] = atp.getAgentAddr(reqpdu).prettyPrint()
-                message["trap_oid"] = trap_oid
-                message["timeticks"] = atp.getTimeStamp(reqpdu).prettyPrint()
+                event["snmp_trap_oid"] = trap_oid
+                event["snmp_timeticks"] = atp.getTimeStamp(reqpdu).prettyPrint()
             else:
                 event["snmp_version"] = "2c"
-                message["trap_oid"] = message["vars"].get(SNMP_TRAP_OID)
+                event["snmp_trap_oid"] = message["vars"].get(SNMP_TRAP_OID)
 
-            event["output"] = json.dumps(message)
             if snmp_debug:
                 pprint(event)
             q.append(event)

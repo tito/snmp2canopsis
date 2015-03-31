@@ -10,7 +10,7 @@ with open(path.join(here, 'README.md'), encoding='utf-8') as f:
 
 setup(
     name='snmp2canopsis',
-    version='0.3',
+    version='0.4',
     description='Send SNMP trap to Canopsis/AMQP',
     long_description=long_description,
     author='Mathieu Virbel',
