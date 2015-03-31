@@ -193,7 +193,7 @@ def snmp_callback(dispatcher, domain, address, msg):
                 event["snmp_timeticks"] = atp.getTimeStamp(reqpdu).prettyPrint()
             else:
                 event["snmp_version"] = "2c"
-                event["snmp_trap_oid"] = message["vars"].get(SNMP_TRAP_OID)
+                event["snmp_trap_oid"] = event["snmp_vars"].get(SNMP_TRAP_OID)
 
             if snmp_debug:
                 pprint(event)
